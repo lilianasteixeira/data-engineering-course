@@ -1,0 +1,11 @@
+*.parquet
+
+_pycache_
+*.py[codz]
+±$py.class
+
+# PostgreSQL data
+ny_taxi_postgres_data/
+**/postgres_data/
+**/pg_wal/
+**/base/
