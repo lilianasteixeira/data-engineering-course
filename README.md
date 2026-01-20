@@ -1,4 +1,4 @@
-# Cohort Homeworrk
+# Cohort Homework
 
 ## Module 1:
 ### Question 1:
@@ -78,3 +78,9 @@ LIMIT 1;
 
 
 ### Question 7:
+
+## Module 2:
+### Question 1:
+### Question 2:
+### Question 3:
+### Question 4:
