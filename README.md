@@ -76,8 +76,8 @@ ORDER BY total DESC
 LIMIT 1;
 ```
 
-
-### Question 7:
+### Question 7: 
+During the youtube class video to perform Downloading plugins and setting up backend we use `terraform init`, Generating and executing changes `terraform apply` and Removing all resources `terraform destroy`.
 
 ## Module 2:
 ### Question 1:
