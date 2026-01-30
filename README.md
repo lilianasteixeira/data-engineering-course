@@ -81,6 +81,49 @@ During the youtube class video to perform Downloading plugins and setting up bac
 
 ## Module 2:
 ### Question 1:
+Extracting the file the size: 134.5MB doing the command `wget -qO- https://github.com/DataTalksClub/nyc-tlc-data/releases/download/yellow/yellow_tripdata_2020-12.csv.gz | gunzip > yellow_tripdata_2020-12.csv`
+
 ### Question 2:
+When the pipeline is executed and the variables are passed to the code the file path change for this `green_tripdata_2020-04.csv`
+
 ### Question 3:
+I execute this:
+```
+SELECT COUNT(1) 
+FROM `peppy-caster-484310-c1.zoomcamp.yellow_tripdata`
+WHERE filename LIKE 'yellow_tripdata_2020%'
+```
+Result: 24648499
+
 ### Question 4:
+I execute this:
+```
+SELECT COUNT(1) 
+FROM `peppy-caster-484310-c1.zoomcamp.green_tripdata`
+WHERE filename LIKE 'green_tripdata_2020%'
+```
+Result: 1734051
+
+### Question 5:
+I perform this query:
+```
+SELECT COUNT(1) 
+FROM `peppy-caster-484310-c1.zoomcamp.yellow_tripdata_2021_03`
+```
+Result: 1925152
+
+### Question 6:
+The correct option is `Add a timezone property set to America/New_York in the Schedule trigger configuration`
+
+## Module 3:
+### Question 1:
+
+### Question 2:
+
+### Question 3:
+
+### Question 4:
+
+### Question 5:
+
+### Question 6:

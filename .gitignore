@@ -58,3 +58,4 @@ terraform.rc
 
 *.json
 *.lock.hcl
+*.env_encoded
