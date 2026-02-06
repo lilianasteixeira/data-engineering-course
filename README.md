@@ -116,14 +116,81 @@ Result: 1925152
 The correct option is `Add a timezone property set to America/New_York in the Schedule trigger configuration`
 
 ## Module 3:
+Steps to complete cohort: change code to inclode bucket and gcp credentials, next execute the code. Initially I include all 2024 months but the results doesn't match with cohort options.
+
 ### Question 1:
+To answer this question, first I create the external table accessing my cloud storage parquet files (I use the same buckt from previous module):
+```
+CREATE OR REPLACE EXTERNAL TABLE `peppy-caster-484310-c1.zoomcamp.yellow_tripdata_2024_ext`
+OPTIONS (
+  format = 'PARQUET',
+  uris = ['gs://kestra-demo/*.parquet']
+);
+```
+And next perform the count:
+```
+SELECT COUNT(*) 
+FROM `peppy-caster-484310-c1.zoomcamp.yellow_tripdata_2024_ext` 
+```
+The result: 20332093
 
 ### Question 2:
+Performing this querys the result was 155,12 MB for the Materialized Table
+```
+SELECT COUNT(DISTINCT PULocationID) 
+FROM `peppy-caster-484310-c1.zoomcamp.yellow_tripdata_2024_ext` 
+```
+
+```
+SELECT COUNT(DISTINCT PULocationID) 
+FROM `peppy-caster-484310-c1.zoomcamp.yellow_tripdata_2024` 
+```
 
 ### Question 3:
+Performed queries:
+```
+SELECT PULocationID 
+FROM `peppy-caster-484310-c1.zoomcamp.yellow_tripdata_2024` 
+```
+```
+SELECT PULocationID, DOLocationID 
+FROM `peppy-caster-484310-c1.zoomcamp.yellow_tripdata_2024` 
+```
 
 ### Question 4:
+Performed query and result: 8333
+```
+SELECT COUNT(*)
+FROM `peppy-caster-484310-c1.zoomcamp.yellow_tripdata_2024` 
+WHERE fare_amount = 0
+```
 
 ### Question 5:
+Performed queries:
+```
+CREATE OR REPLACE TABLE `peppy-caster-484310-c1.zoomcamp.yellow_tripdata_partitioned`
+PARTITION BY DATE(tpep_dropoff_datetime)
+CLUSTER BY VendorID
+AS
+SELECT * FROM `peppy-caster-484310-c1.zoomcamp.yellow_tripdata_2024`;
+```
 
 ### Question 6:
+Performed queries and results: 310.24 MB for non-partitioned table and 26.84 MB for the partitioned table
+```
+SELECT DISTINCT(VendorID)
+FROM `peppy-caster-484310-c1.zoomcamp.yellow_tripdata_partitioned`
+WHERE DATE(tpep_dropoff_datetime) BETWEEN '2024-03-01' AND '2024-03-15';
+```
+```
+SELECT DISTINCT(VendorID)
+FROM `peppy-caster-484310-c1.zoomcamp.yellow_tripdata_2024_ext`
+WHERE DATE(tpep_dropoff_datetime) BETWEEN '2024-03-01' AND '2024-03-15';
+```
+
+### Question 9:
+Read 0B
+```
+SELECT COUNT(*) 
+FROM `peppy-caster-484310-c1.zoomcamp.yellow_tripdata_2024_ext` 
+```
