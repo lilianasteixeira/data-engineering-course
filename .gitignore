@@ -59,3 +59,6 @@ terraform.rc
 *.json
 *.lock.hcl
 *.env_encoded
+.venv/
+venv/
+.vscode/

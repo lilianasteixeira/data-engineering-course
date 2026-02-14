@@ -194,3 +194,51 @@ Read 0B
 SELECT COUNT(*) 
 FROM `peppy-caster-484310-c1.zoomcamp.yellow_tripdata_2024_ext` 
 ```
+
+
+## Module 3:
+On this module I use a lot AI to fix models and dependecies, so the files cannot be exactly like the files of official repo.
+### Question 1:
+`dbt run --select int_trips_unioned` -> result: `TOTAL=1`
+
+### Question 2:
+`dbt test --select fct_trips --target prod`
+
+### Question 3: 
+`duckdb taxi_rides_ny.duckdb "SELECT COUNT(*) as record_count FROM \"taxi_rides_ny\".prod.fct_monthly_zone_revenue;"`-> result: 12184
+
+### Question 4:
+```
+SELECT 
+  pickup_zone, 
+  SUM(revenue_monthly_total_amount) as total_revenue 
+FROM "taxi_rides_ny"."prod"."fct_monthly_zone_revenue" 
+WHERE service_type = 'Green' 
+  AND YEAR(revenue_month) = 2020 
+GROUP BY pickup_zone 
+ORDER BY total_revenue DESC 
+LIMIT 1
+```
+Result: East Harlem North
+
+### Question 5:
+```
+SELECT SUM(total_monthly_trips) as total_trips 
+FROM "taxi_rides_ny"."prod"."fct_monthly_zone_revenue" 
+WHERE service_type = 'Green' 
+  AND YEAR(revenue_month) = 2019 
+  AND MONTH(revenue_month) = 10
+```
+Result: 384,624
+
+### Question 6:
+First, I have created a script to ingest data using AI, only for the year 2019.
+Next I have created the `stg_fhv_tripdata` staging model with:
+- Filter: `dispatching_base_num IS NOT NULL`
+- Field renaming: `pulocationid` → `pickup_location_id`, `dolocationid` → `dropoff_location_id`
+Next I have Built model: `dbt run --select stg_fhv_tripdata --target prod`
+And to have the result:
+```
+SELECT COUNT(*) as record_count FROM prod.stg_fhv_tripdata
+```
+Result: 43244693 
