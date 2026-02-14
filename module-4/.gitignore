@@ -4,3 +4,4 @@ dbt_env/
 logs/
 dbt_packages/
 target/
+*.taxi_rides_ny.duckdb

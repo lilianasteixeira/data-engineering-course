@@ -62,3 +62,4 @@ terraform.rc
 .venv/
 venv/
 .vscode/
+*.taxi_rides_ny.duckdb
