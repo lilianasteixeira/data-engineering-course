@@ -196,7 +196,7 @@ FROM `peppy-caster-484310-c1.zoomcamp.yellow_tripdata_2024_ext`
 ```
 
 
-## Module 3:
+## Module 4:
 On this module I use a lot AI to fix models and dependecies, so the files cannot be exactly like the files of official repo.
 ### Question 1:
 `dbt run --select int_trips_unioned` -> result: `TOTAL=1`

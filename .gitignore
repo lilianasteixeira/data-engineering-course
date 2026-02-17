@@ -63,3 +63,8 @@ terraform.rc
 venv/
 .vscode/
 *.taxi_rides_ny.duckdb
+.bruin.yml
+logs/runs
+logs/*.log
+__pycache__/
+*.py[cod]
