@@ -242,3 +242,14 @@ And to have the result:
 SELECT COUNT(*) as record_count FROM prod.stg_fhv_tripdata
 ```
 Result: 43244693 
+
+## Module 5:
+### Question 1: 
+We need pipeline.yml and assets/
+
+### Question 2:
+### Question 3:
+### Question 4:
+### Question 5:
+### Question 6:
+### Question 7:

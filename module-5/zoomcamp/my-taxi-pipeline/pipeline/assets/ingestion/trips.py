@@ -1,69 +1,123 @@
 """@bruin
+name: ingestion.trips
 
-# TODO: Set the asset name (recommended pattern: schema.asset_name).
-# - Convention in this module: use an `ingestion.` schema for raw ingestion tables.
-name: TODO_SET_ASSET_NAME
-
-# TODO: Set the asset type.
-# Docs: https://getbruin.com/docs/bruin/assets/python
 type: python
 
-# TODO: Pick a Python image version (Bruin runs Python in isolated environments).
-# Example: python:3.11
-image: TODO_SET_PYTHON_IMAGE
+image: python:3.11
 
-# TODO: Choose materialization (optional, but recommended).
-# Bruin feature: Python materialization lets you return a DataFrame (or list[dict]) and Bruin loads it into your destination.
-# This is usually the easiest way to build ingestion assets in Bruin.
-# Alternative (advanced): you can skip Bruin Python materialization and write a "plain" Python asset that manually writes
-# into DuckDB (or another destination) using your own client library and SQL. In that case:
-# - you typically omit the `materialization:` block
-# - you do NOT need a `materialize()` function; you just run Python code
-# Docs: https://getbruin.com/docs/bruin/assets/python#materialization
+connection: duckdb-default
+
 materialization:
-  # TODO: choose `table` or `view` (ingestion generally should be a table)
   type: table
-  # TODO: pick a strategy.
-  # suggested strategy: append
-  strategy: TODO
-
-# TODO: Define output columns (names + types) for metadata, lineage, and quality checks.
-# Tip: mark stable identifiers as `primary_key: true` if you plan to use `merge` later.
-# Docs: https://getbruin.com/docs/bruin/assets/columns
-columns:
-  - name: TODO_col1
-    type: TODO_type
-    description: TODO
+  strategy: append
 
 @bruin"""
 
-# TODO: Add imports needed for your ingestion (e.g., pandas, requests).
-# - Put dependencies in the nearest `requirements.txt` (this template has one at the pipeline root).
-# Docs: https://getbruin.com/docs/bruin/assets/python
+import json
+import os
+from datetime import date, datetime, timedelta
+from io import BytesIO
+from typing import Iterable, List
+
+import pandas as pd
+import requests
+
+BASE_URL = "https://d37ci6vzurychx.cloudfront.net/trip-data"
 
 
-# TODO: Only implement `materialize()` if you are using Bruin Python materialization.
-# If you choose the manual-write approach (no `materialization:` block), remove this function and implement ingestion
-# as a standard Python script instead.
-def materialize():
+def _parse_date(env_var: str) -> date:
+    value = os.getenv(env_var)
+    if not value:
+        raise ValueError(f"{env_var} is required for this asset.")
+    return datetime.strptime(value, "%Y-%m-%d").date()
+
+
+def _month_starts_in_range(start: date, end: date) -> Iterable[date]:
     """
-    TODO: Implement ingestion using Bruin runtime context.
-
-    Required Bruin concepts to use here:
-    - Built-in date window variables:
-      - BRUIN_START_DATE / BRUIN_END_DATE (YYYY-MM-DD)
-      - BRUIN_START_DATETIME / BRUIN_END_DATETIME (ISO datetime)
-      Docs: https://getbruin.com/docs/bruin/assets/python#environment-variables
-    - Pipeline variables:
-      - Read JSON from BRUIN_VARS, e.g. `taxi_types`
-      Docs: https://getbruin.com/docs/bruin/getting-started/pipeline-variables
-
-    Design TODOs (keep logic minimal, focus on architecture):
-    - Use start/end dates + `taxi_types` to generate a list of source endpoints for the run window.
-    - Fetch data for each endpoint, parse into DataFrames, and concatenate.
-    - Add a column like `extracted_at` for lineage/debugging (timestamp of extraction).
-    - Prefer append-only in ingestion; handle duplicates in staging.
+    Generate the first day of each month that overlaps the [start, end) interval.
+    The end date is treated as exclusive, which matches typical Bruin window semantics.
     """
-    # return final_dataframe
+    if start >= end:
+        return []
+
+    current = start.replace(day=1)
+    last_day = end - timedelta(days=1)
+    last = last_day.replace(day=1)
+
+    months: List[date] = []
+    while current <= last:
+        months.append(current)
+        year = current.year + (current.month // 12)
+        month = 1 if current.month == 12 else current.month + 1
+        current = date(year, month, 1)
+
+    return months
 
 
+def _get_taxi_types() -> List[str]:
+    """
+    Read the `taxi_types` pipeline variable from BRUIN_VARS.
+    Falls back to ["yellow"] if not configured.
+    """
+    raw = os.getenv("BRUIN_VARS", "{}")
+    try:
+        vars_dict = json.loads(raw) if raw else {}
+    except json.JSONDecodeError:
+        vars_dict = {}
+
+    taxi_types = vars_dict.get("taxi_types") or ["yellow"]
+    if isinstance(taxi_types, str):
+        taxi_types = [taxi_types]
+
+    return [t.strip().lower() for t in taxi_types if t]
+
+
+def _fetch_month_for_taxi_type(taxi_type: str, month_start: date, extracted_at: str) -> pd.DataFrame | None:
+    """
+    Fetch a single monthly parquet file for a given taxi_type and month.
+    Returns a DataFrame or None if the file is not available (e.g., out-of-range dates).
+    """
+    filename = f"{taxi_type}_tripdata_{month_start.year}-{month_start.month:02d}.parquet"
+    url = f"{BASE_URL}/{filename}"
+
+    response = requests.get(url, stream=True)
+    if response.status_code != 200:
+        # File may not exist for this month/taxi_type; skip quietly.
+        return None
+
+    buffer = BytesIO(response.content)
+    df = pd.read_parquet(buffer)
+    # Tag metadata for downstream use.
+    df["taxi_type"] = taxi_type
+    df["extracted_at"] = extracted_at
+    return df
+
+
+def materialize() -> pd.DataFrame:
+    """
+    Ingest NYC Taxi trip data into the `ingestion.trips` table.
+
+    - Uses BRUIN_START_DATE / BRUIN_END_DATE to determine the date window.
+    - Uses the `taxi_types` pipeline variable to decide which taxi types to ingest.
+    - Downloads monthly parquet files from the TLC public S3 endpoint.
+    - Returns a concatenated pandas DataFrame; Bruin handles the append materialization.
+    """
+    start_date = _parse_date("BRUIN_START_DATE")
+    end_date = _parse_date("BRUIN_END_DATE")
+    taxi_types = _get_taxi_types()
+
+    extracted_at = datetime.utcnow().isoformat(timespec="seconds") + "Z"
+
+    dataframes: List[pd.DataFrame] = []
+
+    for month_start in _month_starts_in_range(start_date, end_date):
+        for taxi_type in taxi_types:
+            df = _fetch_month_for_taxi_type(taxi_type, month_start, extracted_at)
+            if df is not None and not df.empty:
+                dataframes.append(df)
+
+    if not dataframes:
+        # No data found for this window; return an empty DataFrame.
+        return pd.DataFrame()
+
+    return pd.concat(dataframes, ignore_index=True)
