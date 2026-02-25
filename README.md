@@ -256,6 +256,41 @@ We need pipeline.yml and assets/
 not_null
 ### Question 6:
 We can see on terminal on tab Lineage or do the command `bruin lineage <path>`
-
 ### Question 7:
 `bruin run --full-refresh`
+
+
+## Workshop 1:
+Using commands of tutorial and using ui of dlt pipelines, I use the part Dataset Browser: Data and Source/Resource State to do queries.
+
+### Question 1: 
+```
+SELECT min(trip_pickup_date_time)
+FROM "nyc_taxi"
+```
+
+```
+SELECT max(trip_dropoff_date_time)
+FROM "nyc_taxi"
+```
+Result: 2009-06-01 to 2009-07-01
+
+### Question 2: 
+
+```
+SELECT 
+    payment_type,
+    COUNT(*) AS trip_count,
+    ROUND(100.0 * COUNT(*) / SUM(COUNT(*)) OVER (), 2) AS percentage
+FROM "nyc_taxi"
+GROUP BY payment_type
+ORDER BY trip_count DESC;
+```
+Result: 26,66%
+
+### Question 3:
+```
+SELECT SUM(tip_amt) AS total_tips
+FROM "nyc_taxi"
+``` 
+Something went wrong here, this is my result: 12126.82000000002
