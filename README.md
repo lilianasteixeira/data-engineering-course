@@ -297,7 +297,7 @@ Something went wrong here, this is my result: 12126.82000000002
 
 
 ## Module 6:
-For all the questions the answer was on the file data-engineering-course/module-6/code/homework.ipynb
+For all the questions the answer was on the file data-engineering-course/module-6/code/homework.ipynb [homework](data-engineering-course/module-6/code/homework.ipynb)
 ### Question 1:
 Spark version: 4.1.1
 pyspark==4.1.1
