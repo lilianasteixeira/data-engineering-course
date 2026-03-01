@@ -294,3 +294,25 @@ SELECT SUM(tip_amt) AS total_tips
 FROM "nyc_taxi"
 ``` 
 Something went wrong here, this is my result: 12126.82000000002
+
+
+## Module 6:
+For all the questions the answer was on the file data-engineering-course/module-6/code/homework.ipynb
+### Question 1:
+Spark version: 4.1.1
+pyspark==4.1.1
+
+### Question 2:
+I execute this command and for me the file has 71,1MB, something went wrong here. I tried the file download_data.sh and the result said not found
+
+### Question 3:
+Result: 162604
+
+### Question 4:
+Result: 90.6
+
+### Question 5:
+4040
+
+### Question 6: 
+Result: Arden Heights
