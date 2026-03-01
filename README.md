@@ -1,6 +1,10 @@
 # Cohort Homework
 
+
 ## Module 1:
+<details>
+  <summary>Click to see the homework</summary>
+
 ### Question 1:
 To answer this inside the python:3.13 docker container running the command: `pip --version`, so instead of run this command to install that version `docker run -it --rm --entrypoint=bash python:3.9.16`, I install `docker run -it --rm --entrypoint=bash python:3.13` and see the version of the pip
 
@@ -79,7 +83,12 @@ LIMIT 1;
 ### Question 7: 
 During the youtube class video to perform Downloading plugins and setting up backend we use `terraform init`, Generating and executing changes `terraform apply` and Removing all resources `terraform destroy`.
 
+</details>
+
 ## Module 2:
+<details>
+  <summary>Click to see the homework</summary>
+
 ### Question 1:
 Extracting the file the size: 134.5MB doing the command `wget -qO- https://github.com/DataTalksClub/nyc-tlc-data/releases/download/yellow/yellow_tripdata_2020-12.csv.gz | gunzip > yellow_tripdata_2020-12.csv`
 
@@ -114,8 +123,13 @@ Result: 1925152
 
 ### Question 6:
 The correct option is `Add a timezone property set to America/New_York in the Schedule trigger configuration`
+</details>
+
 
 ## Module 3:
+<details>
+  <summary>Click to see the homework</summary>
+
 Steps to complete cohort: change code to inclode bucket and gcp credentials, next execute the code. Initially I include all 2024 months but the results doesn't match with cohort options.
 
 ### Question 1:
@@ -195,8 +209,13 @@ SELECT COUNT(*)
 FROM `peppy-caster-484310-c1.zoomcamp.yellow_tripdata_2024_ext` 
 ```
 
+</details>
+
 
 ## Module 4:
+<details>
+  <summary>Click to see the homework</summary>
+
 On this module I use a lot AI to fix models and dependecies, so the files cannot be exactly like the files of official repo.
 ### Question 1:
 `dbt run --select int_trips_unioned` -> result: `TOTAL=1`
@@ -242,8 +261,13 @@ And to have the result:
 SELECT COUNT(*) as record_count FROM prod.stg_fhv_tripdata
 ```
 Result: 43244693 
+</details>
+
 
 ## Module 5:
+<details>
+  <summary>Click to see the homework</summary>
+
 ### Question 1: 
 We need pipeline.yml and assets/
 ### Question 2:
@@ -259,8 +283,13 @@ We can see on terminal on tab Lineage or do the command `bruin lineage <path>`
 ### Question 7:
 `bruin run --full-refresh`
 
+</details>
+
 
 ## Workshop 1:
+<details>
+  <summary>Click to see the homework</summary>
+
 Using commands of tutorial and using ui of dlt pipelines, I use the part Dataset Browser: Data and Source/Resource State to do queries.
 
 ### Question 1: 
@@ -295,8 +324,14 @@ FROM "nyc_taxi"
 ``` 
 Something went wrong here, this is my result: 12126.82000000002
 
+</details>
+
+
 
 ## Module 6:
+<details>
+  <summary>Click to see the homework</summary>
+
 For all the questions the answer was on the file data-engineering-course/module-6/code/homework.ipynb [homework](https://github.com/lilianasteixeira/data-engineering-course/blob/main/module-6/code/homework.ipynb)
 ### Question 1:
 Spark version: 4.1.1
@@ -316,3 +351,19 @@ Result: 90.6
 
 ### Question 6: 
 Result: Arden Heights
+
+</details>
+
+
+## Module 7:
+<details>
+  <summary>Click to see the homework</summary>
+
+### Question 1:
+### Question 2:
+### Question 3:
+### Question 4:
+### Question 5:   
+
+</details>
+  
