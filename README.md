@@ -1,5 +1,6 @@
 # Cohort Homework
 
+## Project:
 
 ## Module 1:
 <details>
@@ -360,10 +361,43 @@ Result: Arden Heights
   <summary>Click to see the homework</summary>
 
 ### Question 1:
+`docker exec -it module-7-redpanda-1 rpk version` -> rpk version: v25.3.9
 ### Question 2:
+Inside module-7 `uv run python producers/producer.py` always less 10 seconds
+
 ### Question 3:
+`uv run python consumers/consumer_postgres.py`
+then `docker compose exec postgres psql -U postgres -d postgres`
+then because i have duplicated values, I execute this query:
+```
+SELECT count(*) 
+FROM (
+  SELECT DISTINCT lpep_pickup_datetime, lpep_dropoff_datetime, PULocationID, DOLocationID, passenger_count, trip_distance, tip_amount, total_amount 
+FROM processed_events 
+WHERE trip_distance > 5);
+```
 ### Question 4:
+```
+SELECT window_start, total_tip
+FROM hourly_tips
+ORDER BY total_tip DESC
+LIMIT 1;
+```
 ### Question 5:   
+```
+SELECT PULocationID, MAX(num_trips) AS max_trips_in_session
+FROM session_pu_location
+GROUP BY PULocationID
+ORDER BY max_trips_in_session DESC
+LIMIT 5;
+```
+### Question 6:   
+```
+SELECT window_start, ROUND(total_tip, 2) AS total_tip
+FROM hourly_tips
+ORDER BY total_tip DESC
+LIMIT 5;
+```
 
 </details>
   
